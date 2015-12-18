@@ -111,7 +111,7 @@ THREE.VREffect = function ( renderer, onError ) {
 
 	this.render = function ( scene, camera ) {
 
-		if ( vrHMD ) {
+		// if ( vrHMD ) {
 
 			var sceneL, sceneR;
 
@@ -135,11 +135,35 @@ THREE.VREffect = function ( renderer, onError ) {
 
 			if ( camera.parent === undefined ) camera.updateMatrixWorld();
 
+            // HMDがない場合のエミュレート値
+            eyeFOVL || (eyeFOVL = {
+                downDegrees: 53.04646682739258,
+                leftDegrees: 46.63209533691406,
+                rightDegrees: 47.52769470214844,
+                upDegrees: 53.04646682739258
+            });
+            eyeFOVR || (eyeFOVR = {
+                downDegrees: 53.04646682739258,  
+                leftDegrees: 47.52769470214844,
+                rightDegrees: 46.63209533691406,
+                upDegrees: 53.04646682739258
+            });
+
 			cameraL.projectionMatrix = fovToProjection( eyeFOVL, true, camera.near, camera.far );
 			cameraR.projectionMatrix = fovToProjection( eyeFOVR, true, camera.near, camera.far );
 
 			camera.matrixWorld.decompose( cameraL.position, cameraL.quaternion, cameraL.scale );
 			camera.matrixWorld.decompose( cameraR.position, cameraR.quaternion, cameraR.scale );
+
+            // HMDがない場合のエミュレート値
+            eyeTranslationL || (eyeTranslationL = {
+                x: -0.03200000151991844,
+                y: 0
+            });
+            eyeTranslationR || (eyeTranslationR = {
+                x: 0.03200000151991844,
+                y: 0
+            });
 
 			cameraL.translateX( eyeTranslationL.x * this.scale );
 			cameraR.translateX( eyeTranslationR.x * this.scale );
@@ -158,7 +182,7 @@ THREE.VREffect = function ( renderer, onError ) {
 
 			return;
 
-		}
+		// }
 
 		// Regular render mode if not HMD
 
