@@ -18,19 +18,12 @@ html, body {
 canvas {
     vertical-align: top;
 }
-
-#ctrl {
-    position: fixed;
-    right: 10px;
-    bottom: 10px;
-}
 </style>
 </head>
 <body>
 
-    <!-- <p id="ctrl"><input type="button" value="VR Mode" id="btn"></p> -->
-
 <script>
+
 (function () {
     'use strict';
 
@@ -39,8 +32,6 @@ canvas {
 
     // カメラ
     var camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 100000);
-    camera.position.set(0, -20, 50);
-    camera.lookAt(new THREE.Vector3(0, 0, 0))
 
     // レンダラ
     var renderer = new THREE.WebGLRenderer({antialias: true});
@@ -58,6 +49,7 @@ canvas {
     });
     var geometory = new THREE.BoxGeometry(10, 10, 10);
     var mesh = new THREE.Mesh(geometory, material);
+    mesh.position.set(0, 20, 30);
 
     // ライト
     var light = new THREE.DirectionalLight();
@@ -112,15 +104,6 @@ canvas {
 
     scene.add(skybox);
 
-    var ua = navigator.userAgent.toLowerCase();
-    var isSmartphone = !!(~ua.indexOf('iphone') ||
-                          ~ua.indexOf('ipad') ||
-                          ~ua.indexOf('ipod') ||
-                          ~ua.indexOf('android'));
-
-    // OrbitControls
-    var orbitControls = new THREE.OrbitControls(camera);
-
     // VRControls
     var vrControls = new THREE.VRControls(camera);
 
@@ -128,14 +111,15 @@ canvas {
     var effect   = new THREE.VREffect(renderer);
     effect.setSize(width, height);
 
-    var manager = new WebVRManager(renderer, effect);
+    var manager = new WebVRManager(renderer, effect, {
+        // hideButton: true,
+        // isUndistorted: true
+    });
 
     // アニメーションループ
     (function loop() {
         mesh.rotation.y += 0.01;
         vrControls.update();
-        orbitControls.update();
-        // effect.render(scene, camera);
         manager.render(scene, camera);
         requestAnimationFrame(loop);
     }());
@@ -150,12 +134,6 @@ canvas {
         camera.aspect = width / height;
         camera.updateProjectionMatrix();
     }, false);
-
-    // ボタンクリック
-    // document.getElementById('btn').addEventListener('click', function () {
-    //     effect.setFullScreen(true);
-    // }, false);
-
 }());
 </script>
     
